@@ -1,24 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Mini Banking System</title>
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
       --green: #00ff88;
       --green-dim: #00cc66;
-      --green-glow: rgba(0, 255, 136, 0.15);
+      --green-glow: rgba(0,255,136,0.15);
       --bg: #050e0a;
       --panel: #080f0b;
       --border: #0d2b1a;
       --text: #b0f0cc;
       --text-dim: #4a8a62;
     }
-
     body {
       background: var(--bg);
       color: var(--text);
@@ -27,201 +25,118 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
       padding: 24px 16px;
-      overflow-x: hidden;
     }
-
-    /* Scanline overlay */
     body::before {
       content: '';
       position: fixed;
       inset: 0;
-      background: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 2px,
-        rgba(0,0,0,0.07) 2px,
-        rgba(0,0,0,0.07) 4px
-      );
+      background: repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.06) 2px,rgba(0,0,0,0.06) 4px);
       pointer-events: none;
-      z-index: 999;
+      z-index: 998;
     }
-
-    /* Header */
     .header {
-      width: 100%;
-      max-width: 860px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
+      width: 100%; max-width: 860px;
+      display: flex; align-items: center; gap: 14px;
       margin-bottom: 20px;
       padding-bottom: 16px;
       border-bottom: 1px solid var(--border);
     }
-
     .logo {
-      width: 42px;
-      height: 42px;
+      width: 44px; height: 44px;
       border: 2px solid var(--green);
       border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      box-shadow: 0 0 12px var(--green-glow);
-      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 0 14px var(--green-glow);
     }
-
     .header-text h1 {
       font-family: 'Rajdhani', sans-serif;
-      font-weight: 700;
-      font-size: 1.4rem;
+      font-weight: 700; font-size: 1.4rem;
       color: var(--green);
-      letter-spacing: 2px;
-      text-transform: uppercase;
+      letter-spacing: 2px; text-transform: uppercase;
     }
+    .header-text p { font-size: 0.68rem; color: var(--text-dim); letter-spacing: 1px; }
+    .status { margin-left: auto; display: flex; align-items: center; gap: 8px; font-size: 0.7rem; color: var(--text-dim); }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); animation: blink 2s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-    .header-text p {
-      font-size: 0.7rem;
-      color: var(--text-dim);
-      letter-spacing: 1px;
-    }
-
-    .status-dot {
-      margin-left: auto;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.72rem;
-      color: var(--text-dim);
-    }
-
-    .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--green);
-      box-shadow: 0 0 8px var(--green);
-      animation: pulse 2s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
-
-    /* Terminal window */
     .terminal-wrapper {
-      width: 100%;
-      max-width: 860px;
+      width: 100%; max-width: 860px;
       background: var(--panel);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 0 40px rgba(0,255,136,0.05), 0 8px 32px rgba(0,0,0,0.6);
+      border-radius: 10px; overflow: hidden;
+      box-shadow: 0 0 40px rgba(0,255,136,0.04), 0 8px 32px rgba(0,0,0,0.6);
     }
-
-    .terminal-bar {
+    .tbar {
       background: #0a1a10;
       padding: 10px 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      display: flex; align-items: center; gap: 8px;
       border-bottom: 1px solid var(--border);
     }
+    .tb { width: 12px; height: 12px; border-radius: 50%; }
+    .tb.r{background:#ff5f57} .tb.y{background:#febc2e} .tb.g{background:#28c840}
+    .tbar span { margin-left: 8px; font-size: 0.7rem; color: var(--text-dim); letter-spacing: 1px; }
 
-    .tb-btn {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-    }
-    .tb-btn.red   { background: #ff5f57; }
-    .tb-btn.yellow{ background: #febc2e; }
-    .tb-btn.green { background: #28c840; }
-
-    .tb-title {
-      margin-left: 8px;
-      font-size: 0.72rem;
-      color: var(--text-dim);
-      letter-spacing: 1px;
-    }
-
-    /* The actual emscripten output textarea */
     #output {
-      width: 100%;
-      min-height: 420px;
+      width: 100%; min-height: 460px;
       background: transparent;
       color: var(--green);
       font-family: 'Share Tech Mono', monospace;
-      font-size: 0.88rem;
-      line-height: 1.7;
+      font-size: 0.87rem; line-height: 1.75;
       padding: 20px;
-      border: none;
-      outline: none;
-      resize: none;
-      caret-color: var(--green);
+      border: none; outline: none; resize: none;
     }
-
-    /* Input row */
-    .input-row {
-      display: flex;
-      align-items: center;
-      gap: 0;
-      border-top: 1px solid var(--border);
-      background: #060d08;
-    }
-
-    .prompt-label {
-      padding: 0 12px;
-      color: var(--green-dim);
-      font-size: 0.9rem;
-      flex-shrink: 0;
-    }
-
-    #input {
-      flex: 1;
-      background: transparent;
-      border: none;
-      outline: none;
-      color: var(--green);
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.88rem;
-      padding: 12px 4px;
-      caret-color: var(--green);
-    }
-
-    #input::placeholder { color: var(--text-dim); }
-
-    #send-btn {
-      background: transparent;
-      border: none;
-      border-left: 1px solid var(--border);
-      color: var(--green-dim);
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.78rem;
-      padding: 12px 16px;
-      cursor: pointer;
-      letter-spacing: 1px;
-      transition: background 0.2s, color 0.2s;
-    }
-
-    #send-btn:hover {
-      background: var(--green-glow);
-      color: var(--green);
-    }
-
-    /* Footer */
-    .footer {
-      margin-top: 16px;
-      font-size: 0.65rem;
-      color: var(--text-dim);
-      letter-spacing: 1px;
-      opacity: 0.6;
-    }
-
-    /* Canvas hidden (emscripten requires it in DOM) */
+    .footer { margin-top: 14px; font-size: 0.63rem; color: var(--text-dim); letter-spacing: 1px; opacity: 0.5; }
     canvas { display: none !important; }
+
+    /* Modal */
+    #modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.8); z-index: 1000;
+      align-items: center; justify-content: center;
+    }
+    #modal-overlay.show { display: flex; }
+    #modal {
+      background: #0a1a10;
+      border: 1px solid var(--green);
+      border-radius: 10px;
+      padding: 28px 28px 22px;
+      width: 400px;
+      box-shadow: 0 0 50px rgba(0,255,136,0.25);
+      display: flex; flex-direction: column; gap: 14px;
+      animation: popIn 0.15s ease;
+    }
+    @keyframes popIn { from{transform:scale(0.95);opacity:0} to{transform:scale(1);opacity:1} }
+    #modal-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700; font-size: 0.9rem;
+      color: var(--green); letter-spacing: 2px;
+    }
+    #modal-msg { font-size: 0.82rem; color: var(--text); word-break: break-word; }
+    #modal-input {
+      background: #060d08;
+      border: 1px solid var(--green-dim);
+      border-radius: 6px;
+      color: var(--green);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.9rem;
+      padding: 10px 12px;
+      outline: none; width: 100%;
+      caret-color: var(--green);
+    }
+    #modal-input:focus { border-color: var(--green); box-shadow: 0 0 8px var(--green-glow); }
+    .modal-btns { display: flex; gap: 10px; justify-content: flex-end; }
+    .mbtn {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.78rem; padding: 8px 20px;
+      border-radius: 6px; border: 1px solid var(--green-dim);
+      cursor: pointer; letter-spacing: 1px; transition: all 0.2s;
+    }
+    #btn-ok { background: var(--green); color: #050e0a; border-color: var(--green); font-weight: bold; }
+    #btn-ok:hover { box-shadow: 0 0 14px var(--green); }
+    #btn-cancel { background: transparent; color: var(--text-dim); }
+    #btn-cancel:hover { color: var(--text); }
   </style>
 </head>
 <body>
@@ -232,82 +147,95 @@
       <h1>Mini Banking System</h1>
       <p>SECURE CONSOLE TERMINAL · WASM POWERED</p>
     </div>
-    <div class="status-dot">
-      <div class="dot"></div>
-      ONLINE
-    </div>
+    <div class="status"><div class="dot"></div>ONLINE</div>
   </div>
 
   <div class="terminal-wrapper">
-    <div class="terminal-bar">
-      <div class="tb-btn red"></div>
-      <div class="tb-btn yellow"></div>
-      <div class="tb-btn green"></div>
-      <span class="tb-title">banking-system ~ console</span>
+    <div class="tbar">
+      <div class="tb r"></div><div class="tb y"></div><div class="tb g"></div>
+      <span>banking-system ~ console</span>
     </div>
-
     <textarea id="output" readonly></textarea>
-
-    <div class="input-row">
-      <span class="prompt-label">&gt;_</span>
-      <input id="input" type="text" placeholder="type your input and press Enter..." autocomplete="off" />
-      <button id="send-btn" onclick="sendInput()">SEND ↵</button>
-    </div>
   </div>
 
   <div class="footer">WEBASSEMBLY · EMSCRIPTEN · GITHUB PAGES</div>
 
-  <!-- Required by Emscripten -->
+  <!-- Styled Input Modal -->
+  <div id="modal-overlay">
+    <div id="modal">
+      <div id="modal-title">⌨ INPUT REQUIRED</div>
+      <div id="modal-msg"></div>
+      <input id="modal-input" type="text" autocomplete="off" spellcheck="false"/>
+      <div class="modal-btns">
+        <button class="mbtn" id="btn-cancel" onclick="resolveInput(null)">CANCEL</button>
+        <button class="mbtn" id="btn-ok"     onclick="resolveInput(document.getElementById('modal-input').value)">OK ↵</button>
+      </div>
+    </div>
+  </div>
+
   <canvas id="canvas"></canvas>
 
   <script>
-    var Module = {
-      print: function(text) {
-        var el = document.getElementById('output');
-        el.value += text + '\n';
-        el.scrollTop = el.scrollHeight;
-      },
-      printErr: function(text) {
-        // suppress internal emscripten errors from showing
-        if (text.indexOf('WARNING') === -1 && text.indexOf('INFO') === -1) {
-          var el = document.getElementById('output');
-          el.value += '[ERR] ' + text + '\n';
-          el.scrollTop = el.scrollHeight;
-        }
-      },
-      canvas: document.getElementById('canvas'),
-      setStatus: function(text) {},
-      onRuntimeInitialized: function() {
-        document.getElementById('input').focus();
-      }
-    };
+    var _inputResolve = null;
 
-    // Input queue for C program's stdin
-    var inputQueue = [];
-    var inputResolve = null;
+    function showModal(msg) {
+      return new Promise(function(resolve) {
+        _inputResolve = resolve;
+        document.getElementById('modal-msg').textContent = msg || 'Enter value:';
+        document.getElementById('modal-input').value = '';
+        document.getElementById('modal-overlay').classList.add('show');
+        setTimeout(function(){ document.getElementById('modal-input').focus(); }, 50);
+      });
+    }
 
-    function sendInput() {
-      var inp = document.getElementById('input');
-      var val = inp.value;
-      inp.value = '';
-
-      // Echo input to terminal
-      var el = document.getElementById('output');
-      el.value += val + '\n';
-      el.scrollTop = el.scrollHeight;
-
-      if (inputResolve) {
-        inputResolve(val + '\n');
-        inputResolve = null;
-      } else {
-        inputQueue.push(val + '\n');
+    function resolveInput(val) {
+      document.getElementById('modal-overlay').classList.remove('show');
+      if (_inputResolve) {
+        _inputResolve(val === null ? '' : val);
+        _inputResolve = null;
       }
     }
 
-    // Allow Enter key to send
-    document.getElementById('input').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') sendInput();
+    document.getElementById('modal-input').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') resolveInput(this.value);
     });
+
+    function appendOutput(text) {
+      var el = document.getElementById('output');
+      el.value += text + '\n';
+      el.scrollTop = el.scrollHeight;
+    }
+
+    // Override window.prompt with our styled async version + ASYNCIFY
+    window.prompt = function(msg) {
+      // This path is used by Emscripten without ASYNCIFY (fallback)
+      return window._syncPromptValue || '';
+    };
+
+    var Module = {
+      print:    function(t) { appendOutput(t); },
+      printErr: function(t) {
+        if (t.indexOf('Emscripten') === -1 && t.indexOf('INFO') === -1 && t.indexOf('WARNING') === -1)
+          appendOutput('[!] ' + t);
+      },
+      canvas: document.getElementById('canvas'),
+      setStatus: function() {},
+      // ASYNCIFY-powered stdin
+      stdin: null,
+      // Called by Emscripten ASYNCIFY to get input
+      asyncInput: function() {
+        return Asyncify.handleSleep(function(wakeUp) {
+          showModal('Enter value:').then(function(val) {
+            appendOutput(val); // echo input
+            // Feed val as bytes
+            var buf = val + '\n';
+            Module._stdinBuffer = buf;
+            Module._stdinPos = 0;
+            wakeUp(0);
+          });
+        });
+      }
+    };
   </script>
 
   <script async type="text/javascript" src="index.js"></script>
