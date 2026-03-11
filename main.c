@@ -16,7 +16,7 @@ typedef struct {
 
 typedef struct {
     int accNo;
-    char type[20];   // "DEPOSIT" or "WITHDRAW"
+    char type[20];
     float amount;
     char timestamp[30];
 } Transaction;
@@ -32,23 +32,39 @@ int loadAccounts(Account accounts[], int *count);
 void saveAccounts(Account accounts[], int count);
 void logTransaction(int accNo, const char *type, float amount);
 void displayMenu();
+void flushInput();
+
+// ─── FLUSH INPUT HELPER ───────────────────────────────────
+void flushInput() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
 
 // ─── MAIN ─────────────────────────────────────────────────
 int main() {
+    // Disable buffering for browser compatibility
+    setvbuf(stdout, NULL, _IONBF, 0);
+    setvbuf(stdin,  NULL, _IONBF, 0);
+
     int choice;
 
     printf("====================================\n");
     printf("   WELCOME TO MINI BANKING SYSTEM   \n");
     printf("====================================\n");
+    fflush(stdout);
 
     while (1) {
         displayMenu();
         printf("Enter your choice: ");
-        if (scanf("%d", &choice) != 1) {
+        fflush(stdout);
+
+        if (scanf(" %d", &choice) != 1) {
+            flushInput();
             printf("Invalid input! Please enter a number.\n");
-            while (getchar() != '\n'); // flush
+            fflush(stdout);
             continue;
         }
+        flushInput();
 
         switch (choice) {
             case 1: createAccount();        break;
@@ -59,9 +75,11 @@ int main() {
             case 6: viewLastTransactions(); break;
             case 7:
                 printf("\nThank you for using Mini Banking System. Goodbye!\n");
+                fflush(stdout);
                 exit(0);
             default:
                 printf("Invalid choice! Please select between 1 and 7.\n");
+                fflush(stdout);
         }
     }
     return 0;
@@ -78,6 +96,7 @@ void displayMenu() {
     printf(" 6. View Last 5 Transactions\n");
     printf(" 7. Exit\n");
     printf("=================================\n");
+    fflush(stdout);
 }
 
 // ─── LOAD ACCOUNTS FROM FILE ──────────────────────────────
@@ -102,6 +121,7 @@ void saveAccounts(Account accounts[], int count) {
     FILE *fp = fopen(ACCOUNTS_FILE, "w");
     if (fp == NULL) {
         printf("Error: Could not save accounts.\n");
+        fflush(stdout);
         return;
     }
     for (int i = 0; i < count; i++) {
@@ -118,6 +138,7 @@ void logTransaction(int accNo, const char *type, float amount) {
     FILE *fp = fopen(LOG_FILE, "a");
     if (fp == NULL) {
         printf("Warning: Could not write to transaction log.\n");
+        fflush(stdout);
         return;
     }
 
@@ -139,29 +160,38 @@ void createAccount() {
 
     printf("\n--- Create New Account ---\n");
     printf("Enter Account Number: ");
-    if (scanf("%d", &newAcc.accNo) != 1 || newAcc.accNo <= 0) {
+    fflush(stdout);
+
+    if (scanf(" %d", &newAcc.accNo) != 1 || newAcc.accNo <= 0) {
+        flushInput();
         printf("Invalid account number!\n");
-        while (getchar() != '\n');
+        fflush(stdout);
         return;
     }
+    flushInput();
 
-    // Check duplicate
     for (int i = 0; i < count; i++) {
         if (accounts[i].accNo == newAcc.accNo) {
             printf("Account number already exists!\n");
+            fflush(stdout);
             return;
         }
     }
 
     printf("Enter Name (no spaces): ");
-    scanf("%49s", newAcc.name);
+    fflush(stdout);
+    scanf(" %49s", newAcc.name);
+    flushInput();
 
     printf("Enter Initial Balance: ");
-    if (scanf("%f", &newAcc.balance) != 1 || newAcc.balance < 0) {
+    fflush(stdout);
+    if (scanf(" %f", &newAcc.balance) != 1 || newAcc.balance < 0) {
+        flushInput();
         printf("Invalid balance! Must be 0 or more.\n");
-        while (getchar() != '\n');
+        fflush(stdout);
         return;
     }
+    flushInput();
 
     accounts[count] = newAcc;
     count++;
@@ -171,6 +201,7 @@ void createAccount() {
     printf("Account created successfully!\n");
     printf("AccNo: %d | Name: %s | Balance: %.2f\n",
         newAcc.accNo, newAcc.name, newAcc.balance);
+    fflush(stdout);
 }
 
 // ─── DEPOSIT MONEY ────────────────────────────────────────
@@ -181,6 +212,7 @@ void depositMoney() {
 
     if (count == 0) {
         printf("No accounts found. Please create an account first.\n");
+        fflush(stdout);
         return;
     }
 
@@ -189,29 +221,37 @@ void depositMoney() {
 
     printf("\n--- Deposit Money ---\n");
     printf("Enter Account Number: ");
-    if (scanf("%d", &accNo) != 1) {
+    fflush(stdout);
+    if (scanf(" %d", &accNo) != 1) {
+        flushInput();
         printf("Invalid input!\n");
-        while (getchar() != '\n');
+        fflush(stdout);
         return;
     }
+    flushInput();
 
     for (int i = 0; i < count; i++) {
         if (accounts[i].accNo == accNo) {
             printf("Enter Deposit Amount: ");
-            if (scanf("%f", &amount) != 1 || amount <= 0) {
+            fflush(stdout);
+            if (scanf(" %f", &amount) != 1 || amount <= 0) {
+                flushInput();
                 printf("Invalid amount! Must be greater than 0.\n");
-                while (getchar() != '\n');
+                fflush(stdout);
                 return;
             }
+            flushInput();
             accounts[i].balance += amount;
             saveAccounts(accounts, count);
             logTransaction(accNo, "DEPOSIT", amount);
             printf("Deposited %.2f successfully!\n", amount);
             printf("New Balance: %.2f\n", accounts[i].balance);
+            fflush(stdout);
             return;
         }
     }
     printf("Account not found!\n");
+    fflush(stdout);
 }
 
 // ─── WITHDRAW MONEY ───────────────────────────────────────
@@ -222,6 +262,7 @@ void withdrawMoney() {
 
     if (count == 0) {
         printf("No accounts found. Please create an account first.\n");
+        fflush(stdout);
         return;
     }
 
@@ -230,23 +271,30 @@ void withdrawMoney() {
 
     printf("\n--- Withdraw Money ---\n");
     printf("Enter Account Number: ");
-    if (scanf("%d", &accNo) != 1) {
+    fflush(stdout);
+    if (scanf(" %d", &accNo) != 1) {
+        flushInput();
         printf("Invalid input!\n");
-        while (getchar() != '\n');
+        fflush(stdout);
         return;
     }
+    flushInput();
 
     for (int i = 0; i < count; i++) {
         if (accounts[i].accNo == accNo) {
             printf("Current Balance: %.2f\n", accounts[i].balance);
             printf("Enter Withdrawal Amount: ");
-            if (scanf("%f", &amount) != 1 || amount <= 0) {
+            fflush(stdout);
+            if (scanf(" %f", &amount) != 1 || amount <= 0) {
+                flushInput();
                 printf("Invalid amount! Must be greater than 0.\n");
-                while (getchar() != '\n');
+                fflush(stdout);
                 return;
             }
+            flushInput();
             if (amount > accounts[i].balance) {
                 printf("Insufficient balance! Cannot withdraw %.2f\n", amount);
+                fflush(stdout);
                 return;
             }
             accounts[i].balance -= amount;
@@ -254,10 +302,12 @@ void withdrawMoney() {
             logTransaction(accNo, "WITHDRAW", amount);
             printf("Withdrawn %.2f successfully!\n", amount);
             printf("Remaining Balance: %.2f\n", accounts[i].balance);
+            fflush(stdout);
             return;
         }
     }
     printf("Account not found!\n");
+    fflush(stdout);
 }
 
 // ─── VIEW ALL ACCOUNTS ────────────────────────────────────
@@ -268,6 +318,7 @@ void viewAllAccounts() {
 
     if (count == 0) {
         printf("No accounts found.\n");
+        fflush(stdout);
         return;
     }
 
@@ -281,6 +332,7 @@ void viewAllAccounts() {
             accounts[i].balance);
     }
     printf("Total Accounts: %d\n", count);
+    fflush(stdout);
 }
 
 // ─── SEARCH ACCOUNT ───────────────────────────────────────
@@ -292,11 +344,14 @@ void searchAccount() {
     int accNo;
     printf("\n--- Search Account ---\n");
     printf("Enter Account Number: ");
-    if (scanf("%d", &accNo) != 1) {
+    fflush(stdout);
+    if (scanf(" %d", &accNo) != 1) {
+        flushInput();
         printf("Invalid input!\n");
-        while (getchar() != '\n');
+        fflush(stdout);
         return;
     }
+    flushInput();
 
     for (int i = 0; i < count; i++) {
         if (accounts[i].accNo == accNo) {
@@ -304,10 +359,12 @@ void searchAccount() {
             printf("AccNo   : %d\n", accounts[i].accNo);
             printf("Name    : %s\n", accounts[i].name);
             printf("Balance : %.2f\n", accounts[i].balance);
+            fflush(stdout);
             return;
         }
     }
     printf("Account number %d not found!\n", accNo);
+    fflush(stdout);
 }
 
 // ─── VIEW LAST 5 TRANSACTIONS ─────────────────────────────
@@ -315,15 +372,19 @@ void viewLastTransactions() {
     int accNo;
     printf("\n--- Last 5 Transactions ---\n");
     printf("Enter Account Number: ");
-    if (scanf("%d", &accNo) != 1) {
+    fflush(stdout);
+    if (scanf(" %d", &accNo) != 1) {
+        flushInput();
         printf("Invalid input!\n");
-        while (getchar() != '\n');
+        fflush(stdout);
         return;
     }
+    flushInput();
 
     FILE *fp = fopen(LOG_FILE, "r");
     if (fp == NULL) {
         printf("No transaction records found.\n");
+        fflush(stdout);
         return;
     }
 
@@ -341,12 +402,13 @@ void viewLastTransactions() {
 
     if (total == 0) {
         printf("No transactions found for account %d.\n", accNo);
+        fflush(stdout);
         return;
     }
 
     int start = (total > 5) ? total - 5 : 0;
     printf("\nLast %d transaction(s) for Account %d:\n", total - start, accNo);
-    printf("%-12s %-10s %-12s\n", "Type", "Amount", "Timestamp");
+    printf("%-12s %-10s %-20s\n", "Type", "Amount", "Timestamp");
     printf("------------------------------------------\n");
     for (int i = start; i < total; i++) {
         printf("%-12s %-10.2f %-20s\n",
@@ -354,4 +416,5 @@ void viewLastTransactions() {
             all[i].amount,
             all[i].timestamp);
     }
+    fflush(stdout);
 }
