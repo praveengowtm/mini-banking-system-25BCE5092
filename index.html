@@ -253,12 +253,24 @@ inputEl.addEventListener('keydown', function(e){
    Module — Emscripten hooks
 ------------------------------------------------------- */
 var Module = {
+
+  /* FIX: tell Emscripten where to find the .wasm file.
+     Without this, it fails on GitHub Pages subdirectory URLs. */
+  locateFile: function(filename) {
+    /* Get the folder where index.html lives */
+    var base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+    console.log('[wasm] loading:', base + filename);
+    return base + filename;
+  },
+
   /* Redirect stdout → our terminal */
   print: function(text) {
     appendLine(text);
   },
   printErr: function(text) {
     console.warn('[wasm]', text);
+    /* Show WASM errors visibly so you can debug */
+    appendLine('⚠ ' + text);
   },
 
   /* Custom stdin: called by Emscripten when C reads a char */
