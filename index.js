@@ -4098,7 +4098,6 @@ var findStringEnd = (heapOrArray, idx, maxBytesToRead, ignoreNul) => {
       quit_(1, e);
     };
 
-
   var runAndAbortIfError = (func) => {
       try {
         return func();
@@ -4398,18 +4397,6 @@ var findStringEnd = (heapOrArray, idx, maxBytesToRead, ignoreNul) => {
       }),
   };
 
-  var FS_createPath = (...args) => FS.createPath(...args);
-
-
-
-  var FS_unlink = (...args) => FS.unlink(...args);
-
-  var FS_createLazyFile = (...args) => FS.createLazyFile(...args);
-
-  var FS_createDevice = (...args) => FS.createDevice(...args);
-
-
-
   FS.createPreloadedFile = FS_createPreloadedFile;
   FS.preloadFile = FS_preloadFile;
   FS.staticInit();;
@@ -4460,14 +4447,6 @@ if (Module['wasmBinary']) wasmBinary = Module['wasmBinary'];
 }
 
 // Begin runtime exports
-  Module['addRunDependency'] = addRunDependency;
-  Module['removeRunDependency'] = removeRunDependency;
-  Module['FS_preloadFile'] = FS_preloadFile;
-  Module['FS_unlink'] = FS_unlink;
-  Module['FS_createPath'] = FS_createPath;
-  Module['FS_createDevice'] = FS_createDevice;
-  Module['FS_createDataFile'] = FS_createDataFile;
-  Module['FS_createLazyFile'] = FS_createLazyFile;
   var missingLibrarySymbols = [
   'writeI53ToI64',
   'writeI53ToI64Clamped',
@@ -4679,6 +4658,8 @@ missingLibrarySymbols.forEach(missingLibrarySymbol)
   'wasmMemory',
   'getUniqueRunDependency',
   'noExitRuntime',
+  'addRunDependency',
+  'removeRunDependency',
   'addOnPreRun',
   'addOnPostRun',
   'freeTableIndexes',
@@ -4730,10 +4711,14 @@ missingLibrarySymbols.forEach(missingLibrarySymbol)
   'SYSCALLS',
   'preloadPlugins',
   'FS_createPreloadedFile',
+  'FS_preloadFile',
   'FS_modeStringToFlags',
   'FS_getMode',
   'FS_stdin_getChar_buffer',
   'FS_stdin_getChar',
+  'FS_unlink',
+  'FS_createPath',
+  'FS_createDevice',
   'FS_readFile',
   'FS',
   'FS_root',
@@ -4838,7 +4823,9 @@ missingLibrarySymbols.forEach(missingLibrarySymbol)
   'FS_findObject',
   'FS_analyzePath',
   'FS_createFile',
+  'FS_createDataFile',
   'FS_forceLoadFile',
+  'FS_createLazyFile',
   'FS_absolutePath',
   'FS_createFolder',
   'FS_createLink',
