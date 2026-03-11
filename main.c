@@ -545,6 +545,8 @@ void printMenu(void)
  * ============================================================ */
 int main(void)
 {
+
+    setbuf(stdout,NULL);
     int choice;
 
     printf("\n  Welcome to Vault Bank System!\n\n");
