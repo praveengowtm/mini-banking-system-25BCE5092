@@ -7,11 +7,17 @@
         body {
             font-family: Arial;
             text-align: center;
+            background: #f4f4f4;
+        }
+
+        h2 {
+            color: #333;
         }
 
         input {
-            padding: 5px;
+            padding: 6px;
             margin: 5px;
+            width: 200px;
         }
 
         button {
@@ -33,26 +39,30 @@
 
 <body>
 
-<h2>🏦 Vault Bank</h2>
+<h2>🏦 Vault Bank System</h2>
+<p id="status">🔄 Loading WebAssembly...</p>
 
 <h3>Create Account</h3>
 <input id="accNo" placeholder="Account No">
 <input id="name" placeholder="Name">
 <input id="balance" placeholder="Balance">
-<button onclick="createAccount()">Create</button>
+<br>
+<button onclick="createAccount()" id="btn1" disabled>Create</button>
 
 <h3>Deposit</h3>
 <input id="d_acc" placeholder="Account No">
 <input id="d_amt" placeholder="Amount">
-<button onclick="deposit()">Deposit</button>
+<br>
+<button onclick="deposit()" id="btn2" disabled>Deposit</button>
 
 <h3>Withdraw</h3>
 <input id="w_acc" placeholder="Account No">
 <input id="w_amt" placeholder="Amount">
-<button onclick="withdraw()">Withdraw</button>
+<br>
+<button onclick="withdraw()" id="btn3" disabled>Withdraw</button>
 
 <br><br>
-<button onclick="summary()">View Summary</button>
+<button onclick="summary()" id="btn4" disabled>View Summary</button>
 <button onclick="clearScreen()">Clear</button>
 
 <br><br>
@@ -60,16 +70,26 @@
 <textarea id="output" readonly></textarea>
 
 <script>
-/* ✅ TERMINAL OUTPUT SETUP */
+/* ✅ MODULE CONFIG */
 var Module = {
+    onRuntimeInitialized: function() {
+        document.getElementById("status").innerHTML = "✅ Ready";
+
+        // Enable buttons
+        document.getElementById("btn1").disabled = false;
+        document.getElementById("btn2").disabled = false;
+        document.getElementById("btn3").disabled = false;
+        document.getElementById("btn4").disabled = false;
+    },
+
     print: function(text) {
         let out = document.getElementById("output");
         out.value += text + "\n";
-        out.scrollTop = out.scrollHeight; // auto scroll
+        out.scrollTop = out.scrollHeight;
     }
 };
 
-/* ✅ INPUT FUNCTIONS */
+/* ✅ FUNCTIONS */
 
 function createAccount() {
     Module.print(">> Creating Account...");
@@ -77,9 +97,9 @@ function createAccount() {
     Module.ccall('ui_create_account', null,
         ['string','string','number'],
         [
-            accNo.value,
-            name.value,
-            parseFloat(balance.value)
+            document.getElementById("accNo").value,
+            document.getElementById("name").value,
+            parseFloat(document.getElementById("balance").value)
         ]);
 }
 
@@ -89,8 +109,8 @@ function deposit() {
     Module.ccall('ui_deposit', null,
         ['string','number'],
         [
-            d_acc.value,
-            parseFloat(d_amt.value)
+            document.getElementById("d_acc").value,
+            parseFloat(document.getElementById("d_amt").value)
         ]);
 }
 
@@ -100,23 +120,22 @@ function withdraw() {
     Module.ccall('ui_withdraw', null,
         ['string','number'],
         [
-            w_acc.value,
-            parseFloat(w_amt.value)
+            document.getElementById("w_acc").value,
+            parseFloat(document.getElementById("w_amt").value)
         ]);
 }
 
 function summary() {
     Module.print(">> Showing Summary...");
-
     Module.ccall('ui_summary', null, [], []);
 }
 
-/* ✅ CLEAR TERMINAL */
 function clearScreen() {
     document.getElementById("output").value = "";
 }
 </script>
 
+<!-- ✅ IMPORTANT: load after Module -->
 <script src="index.js"></script>
 
 </body>
