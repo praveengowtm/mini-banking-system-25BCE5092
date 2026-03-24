@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vault Bank</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f4f4;
+            text-align: center;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        .box {
+            background: white;
+            padding: 15px;
+            margin: 15px auto;
+            width: 300px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #ccc;
+        }
+
+        input {
+            display: block;
+            width: 90%;
+            margin: 5px auto;
+            padding: 8px;
+        }
+
+        button {
+            padding: 8px 15px;
+            margin-top: 5px;
+            cursor: pointer;
+        }
+
+        textarea {
+            width: 80%;
+            height: 200px;
+            margin-top: 20px;
+            background: black;
+            color: lime;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2>🏦 Vault Bank System</h2>
+
+<div class="box">
+    <h3>Create Account</h3>
+    <input id="accNo" placeholder="Account No">
+    <input id="name" placeholder="Name">
+    <input id="balance" placeholder="Balance">
+    <button onclick="createAccount()">Create</button>
+</div>
+
+<div class="box">
+    <h3>Deposit</h3>
+    <input id="d_acc" placeholder="Account No">
+    <input id="d_amt" placeholder="Amount">
+    <button onclick="deposit()">Deposit</button>
+</div>
+
+<div class="box">
+    <h3>Withdraw</h3>
+    <input id="w_acc" placeholder="Account No">
+    <input id="w_amt" placeholder="Amount">
+    <button onclick="withdraw()">Withdraw</button>
+</div>
+
+<button onclick="summary()">View Summary</button>
+
+<br>
+
+<textarea id="output"></textarea>
+
+<script>
+var Module = {
+    print: function(text) {
+        let out = document.getElementById("output");
+        out.value += text + "\n";
+        out.scrollTop = out.scrollHeight;
+    }
+};
+
+function createAccount() {
+    Module.ccall('create_account', null,
+        ['string','string','number'],
+        [
+            accNo.value,
+            name.value,
+            parseFloat(balance.value)
+        ]);
+}
+
+function deposit() {
+    Module.ccall('deposit', null,
+        ['string','number'],
+        [
+            d_acc.value,
+            parseFloat(d_amt.value)
+        ]);
+}
+
+function withdraw() {
+    Module.ccall('withdraw', null,
+        ['string','number'],
+        [
+            w_acc.value,
+            parseFloat(w_amt.value)
+        ]);
+}
+
+function summary() {
+    Module.ccall('summary', null, [], []);
+}
+</script>
+
+<script src="index.js"></script>
+
+</body>
+</html>
