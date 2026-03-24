@@ -2,6 +2,33 @@
 <html>
 <head>
     <title>Vault Bank</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+        }
+
+        input {
+            padding: 5px;
+            margin: 5px;
+        }
+
+        button {
+            padding: 6px 12px;
+            margin: 5px;
+            cursor: pointer;
+        }
+
+        textarea {
+            width: 80%;
+            height: 250px;
+            background: black;
+            color: lime;
+            font-family: monospace;
+            padding: 10px;
+        }
+    </style>
 </head>
 
 <body>
@@ -26,22 +53,27 @@
 
 <br><br>
 <button onclick="summary()">View Summary</button>
+<button onclick="clearScreen()">Clear</button>
 
 <br><br>
 
-<textarea id="output" rows="10" cols="80"></textarea>
+<textarea id="output" readonly></textarea>
 
 <script>
-/* ✅ DEFINE MODULE FIRST (CRITICAL FIX) */
+/* ✅ TERMINAL OUTPUT SETUP */
 var Module = {
     print: function(text) {
         let out = document.getElementById("output");
         out.value += text + "\n";
+        out.scrollTop = out.scrollHeight; // auto scroll
     }
 };
 
-/* ✅ FUNCTIONS */
+/* ✅ INPUT FUNCTIONS */
+
 function createAccount() {
+    Module.print(">> Creating Account...");
+
     Module.ccall('ui_create_account', null,
         ['string','string','number'],
         [
@@ -52,6 +84,8 @@ function createAccount() {
 }
 
 function deposit() {
+    Module.print(">> Depositing...");
+
     Module.ccall('ui_deposit', null,
         ['string','number'],
         [
@@ -61,6 +95,8 @@ function deposit() {
 }
 
 function withdraw() {
+    Module.print(">> Withdrawing...");
+
     Module.ccall('ui_withdraw', null,
         ['string','number'],
         [
@@ -70,11 +106,17 @@ function withdraw() {
 }
 
 function summary() {
+    Module.print(">> Showing Summary...");
+
     Module.ccall('ui_summary', null, [], []);
+}
+
+/* ✅ CLEAR TERMINAL */
+function clearScreen() {
+    document.getElementById("output").value = "";
 }
 </script>
 
-<!-- ✅ LOAD JS AFTER MODULE -->
 <script src="index.js"></script>
 
 </body>
