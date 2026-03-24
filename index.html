@@ -2,140 +2,69 @@
 <html>
 <head>
     <title>Vault Bank</title>
-
-    <style>
-        body {
-            font-family: Arial;
-            text-align: center;
-            background: #f4f4f4;
-        }
-
-        h2 {
-            color: #333;
-        }
-
-        input {
-            padding: 6px;
-            margin: 5px;
-            width: 200px;
-        }
-
-        button {
-            padding: 6px 12px;
-            margin: 5px;
-            cursor: pointer;
-        }
-
-        textarea {
-            width: 80%;
-            height: 250px;
-            background: black;
-            color: lime;
-            font-family: monospace;
-            padding: 10px;
-        }
-    </style>
 </head>
 
 <body>
 
-<h2>🏦 Vault Bank System</h2>
-<p id="status">🔄 Loading WebAssembly...</p>
+<h2>Vault Bank</h2>
+<p id="status">Loading...</p>
 
-<h3>Create Account</h3>
+<h3>Create</h3>
 <input id="accNo" placeholder="Account No">
 <input id="name" placeholder="Name">
-<input id="balance" placeholder="Balance">
-<br>
-<button onclick="createAccount()" id="btn1" disabled>Create</button>
+<input id="bal" placeholder="Balance">
+<button onclick="create()">Create</button>
 
 <h3>Deposit</h3>
-<input id="d_acc" placeholder="Account No">
-<input id="d_amt" placeholder="Amount">
-<br>
-<button onclick="deposit()" id="btn2" disabled>Deposit</button>
+<input id="dacc" placeholder="Account No">
+<input id="damt" placeholder="Amount">
+<button onclick="deposit()">Deposit</button>
 
 <h3>Withdraw</h3>
-<input id="w_acc" placeholder="Account No">
-<input id="w_amt" placeholder="Amount">
-<br>
-<button onclick="withdraw()" id="btn3" disabled>Withdraw</button>
+<input id="wacc" placeholder="Account No">
+<input id="wamt" placeholder="Amount">
+<button onclick="withdraw()">Withdraw</button>
 
 <br><br>
-<button onclick="summary()" id="btn4" disabled>View Summary</button>
-<button onclick="clearScreen()">Clear</button>
+<button onclick="summary()">Summary</button>
 
 <br><br>
-
-<textarea id="output" readonly></textarea>
+<textarea id="out" rows="10" cols="80"></textarea>
 
 <script>
-/* ✅ MODULE CONFIG */
 var Module = {
     onRuntimeInitialized: function() {
-        document.getElementById("status").innerHTML = "✅ Ready";
-
-        // Enable buttons
-        document.getElementById("btn1").disabled = false;
-        document.getElementById("btn2").disabled = false;
-        document.getElementById("btn3").disabled = false;
-        document.getElementById("btn4").disabled = false;
+        document.getElementById("status").innerText = "Ready";
     },
-
     print: function(text) {
-        let out = document.getElementById("output");
-        out.value += text + "\n";
-        out.scrollTop = out.scrollHeight;
+        let o = document.getElementById("out");
+        o.value += text + "\n";
     }
 };
 
-/* ✅ FUNCTIONS */
-
-function createAccount() {
-    Module.print(">> Creating Account...");
-
-    Module.ccall('ui_create_account', null,
-        ['string','string','number'],
-        [
-            document.getElementById("accNo").value,
-            document.getElementById("name").value,
-            parseFloat(document.getElementById("balance").value)
-        ]);
+function create() {
+    Module.ccall("ui_create_account", null,
+        ["string","string","number"],
+        [accNo.value, name.value, parseFloat(bal.value)]);
 }
 
 function deposit() {
-    Module.print(">> Depositing...");
-
-    Module.ccall('ui_deposit', null,
-        ['string','number'],
-        [
-            document.getElementById("d_acc").value,
-            parseFloat(document.getElementById("d_amt").value)
-        ]);
+    Module.ccall("ui_deposit", null,
+        ["string","number"],
+        [dacc.value, parseFloat(damt.value)]);
 }
 
 function withdraw() {
-    Module.print(">> Withdrawing...");
-
-    Module.ccall('ui_withdraw', null,
-        ['string','number'],
-        [
-            document.getElementById("w_acc").value,
-            parseFloat(document.getElementById("w_amt").value)
-        ]);
+    Module.ccall("ui_withdraw", null,
+        ["string","number"],
+        [wacc.value, parseFloat(wamt.value)]);
 }
 
 function summary() {
-    Module.print(">> Showing Summary...");
-    Module.ccall('ui_summary', null, [], []);
-}
-
-function clearScreen() {
-    document.getElementById("output").value = "";
+    Module.ccall("ui_summary", null, [], []);
 }
 </script>
 
-<!-- ✅ IMPORTANT: load after Module -->
 <script src="index.js"></script>
 
 </body>
